@@ -17,6 +17,12 @@ import com.journaldev.spring.jdbc.model.Employee;
 public class EmployeeDAOTemplate implements EmployeeDAO {
 	private static final Logger LOGGER= Logger.getLogger(Employee.class);
 
+	private static final String GET_ALL = "select id, name, role from Employee";
+	private static final String DELETE_BY_ID = "delete from Employee where id=?";
+	private static final String UPDATE_QUERY = "update Employee set name=?, role=? where id=?";
+	private static final String GET_BY_ID_QUERY = "select id, name, role from Employee where id = ?";
+	private static final String INSERT_QUERY = "insert into Employee (id, name, role) values (?,?,?)";
+
 	private DataSource dataSource;
 
 	public void setDataSource(DataSource dataSource) {
@@ -25,13 +31,11 @@ public class EmployeeDAOTemplate implements EmployeeDAO {
 
 	@Override
 	public void save(Employee employee) {
-		String query = "insert into Employee (id, name, role) values (?,?,?)";
-
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 		Object[] args = new Object[] {employee.getId(), employee.getName(), employee.getRole()};
 
-		int out = jdbcTemplate.update(query, args);
+		int out = jdbcTemplate.update(INSERT_QUERY, args);
 
 		if(out !=0)
 			LOGGER.debug("Employee saved with id="+employee.getId());
@@ -41,11 +45,10 @@ public class EmployeeDAOTemplate implements EmployeeDAO {
 
 	@Override
 	public Employee getById(int id) {
-		String query = "select id, name, role from Employee where id = ?";
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 		//using RowMapper anonymous class, we can create a separate RowMapper for reuse
-		Employee emp = jdbcTemplate.queryForObject(query, new Object[]{id}, new RowMapper<Employee>(){
+		Employee emp = jdbcTemplate.queryForObject(GET_BY_ID_QUERY, new Object[]{id}, new RowMapper<Employee>(){
 			@Override
 			public Employee mapRow(ResultSet rs, int rowNum) throws SQLException {
 				Employee emp = new Employee();
@@ -60,13 +63,11 @@ public class EmployeeDAOTemplate implements EmployeeDAO {
 
 	@Override
 	public void update(Employee employee) {
-		String query = "update Employee set name=?, role=? where id=?";
-		
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		
 		Object[] args = new Object[] {employee.getName(), employee.getRole(), employee.getId()};
 
-		int out = jdbcTemplate.update(query, args);
+		int out = jdbcTemplate.update(UPDATE_QUERY, args);
 		if(out !=0)
 			LOGGER.debug("Employee updated with id="+employee.getId());
 		else 
@@ -75,11 +76,9 @@ public class EmployeeDAOTemplate implements EmployeeDAO {
 
 	@Override
 	public void deleteById(int id) {
-
-		String query = "delete from Employee where id=?";
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-		int out = jdbcTemplate.update(query, id);
+		int out = jdbcTemplate.update(DELETE_BY_ID, id);
 		if(out !=0)
 			LOGGER.debug("Employee deleted with id="+id);
 		else 
@@ -88,11 +87,10 @@ public class EmployeeDAOTemplate implements EmployeeDAO {
 
 	@Override
 	public List<Employee> getAll() {
-		String query = "select id, name, role from Employee";
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		List<Employee> empList = new ArrayList<Employee>();
 
-		List<Map<String,Object>> empRows = jdbcTemplate.queryForList(query);
+		List<Map<String,Object>> empRows = jdbcTemplate.queryForList(GET_ALL);
 
 		for(Map<String,Object> empRow : empRows){
 			Employee emp = new Employee();
@@ -103,5 +101,4 @@ public class EmployeeDAOTemplate implements EmployeeDAO {
 		}
 		return empList;
 	}
-
 }
