@@ -36,7 +36,7 @@ public class JDBCEmployeeDAOImpl implements JDBCEmployeeDAO{
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Employee findById(int id){
-
+		LOGGER.debug("Find By Id : "+id);
 		String sql = "SELECT * FROM EMPLOYEE WHERE ID = ?";
 
 		jdbcTemplate = new JdbcTemplate(dataSource);
