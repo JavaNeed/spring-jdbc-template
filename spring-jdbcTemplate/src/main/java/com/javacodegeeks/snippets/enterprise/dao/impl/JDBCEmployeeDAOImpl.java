@@ -27,7 +27,7 @@ public class JDBCEmployeeDAOImpl implements JDBCEmployeeDAO{
 	}
 
 	public void insert(Employee employee){
-		String sql = "INSERT INTO EMPLOYEE (ID, NAME, AGE) VALUES (?, ?, ?)";
+		String sql = "INSERT INTO EMPLOYEE (id, name, age) VALUES (?, ?, ?)";
 
 		jdbcTemplate = new JdbcTemplate(dataSource);
 
@@ -40,8 +40,7 @@ public class JDBCEmployeeDAOImpl implements JDBCEmployeeDAO{
 		String sql = "SELECT * FROM EMPLOYEE WHERE ID = ?";
 
 		jdbcTemplate = new JdbcTemplate(dataSource);
-		Employee employee = (Employee) jdbcTemplate.queryForObject(
-				sql, new Object[] { id }, new BeanPropertyRowMapper(Employee.class));
+		Employee employee = (Employee) jdbcTemplate.queryForObject(sql, new Object[] { id }, new BeanPropertyRowMapper(Employee.class));
 
 		return employee;
 	}
@@ -57,9 +56,9 @@ public class JDBCEmployeeDAOImpl implements JDBCEmployeeDAO{
 		List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 		for (Map row : rows) {
 			Employee employee = new Employee();
-			employee.setId(Integer.parseInt(String.valueOf(row.get("ID"))));
-			employee.setName((String)row.get("NAME"));
-			employee.setAge(Integer.parseInt(String.valueOf(row.get("AGE"))));
+			employee.setId(Integer.parseInt(String.valueOf(row.get("id"))));
+			employee.setName((String)row.get("name"));
+			employee.setAge(Integer.parseInt(String.valueOf(row.get("age"))));
 			employees.add(employee);
 		}
 

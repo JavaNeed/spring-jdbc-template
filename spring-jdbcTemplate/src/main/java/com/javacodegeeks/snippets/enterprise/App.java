@@ -20,9 +20,11 @@ public class App {
 
 		Employee emplNew1 = new Employee(23, "John", 23);
 		Employee emplNew2 = new Employee(223, "Mark", 43);
+
 		List<Employee> employeesN = new ArrayList();
 		employeesN.add(emplNew1);
 		employeesN.add(emplNew2);
+		
 		jdbcEmployeeDAO.insertBatch1(employeesN);
 		LOGGER.debug(" inserted rows: " + employeesN);
 
