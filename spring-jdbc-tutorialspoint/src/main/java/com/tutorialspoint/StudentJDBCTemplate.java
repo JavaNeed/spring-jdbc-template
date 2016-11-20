@@ -11,12 +11,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 public class StudentJDBCTemplate implements StudentDAO{
 
-	private DataSource dataSource;
 	private JdbcTemplate jdbcTemplate;
 
 	@Autowired
 	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
@@ -31,7 +29,7 @@ public class StudentJDBCTemplate implements StudentDAO{
 	@Override
 	public Student getStudent(Integer id) {
 		String sql = "select * from Student where id = ?";
-		Student student = jdbcTemplate.queryForObject(sql, new Object[]{ id }, this::mapStudent);
+		Student student = jdbcTemplate.queryForObject(sql, new Object[]{ id }, this::mapStudent); // Using Java 8
 		return student;
 	}
 
