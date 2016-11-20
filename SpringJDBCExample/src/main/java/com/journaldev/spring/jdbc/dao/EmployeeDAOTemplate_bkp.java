@@ -14,8 +14,14 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.journaldev.spring.jdbc.model.Employee;
 
-public class EmployeeDAOTemplate implements EmployeeDAO {
+public class EmployeeDAOTemplate_bkp implements EmployeeDAO {
 	private static final Logger LOGGER= Logger.getLogger(Employee.class);
+
+	private static final String GET_ALL = "select id, name, role from Employee";
+	private static final String DELETE_BY_ID = "delete from Employee where id=?";
+	private static final String UPDATE_QUERY = "update Employee set name=?, role=? where id=?";
+	private static final String GET_BY_ID_QUERY = "select id, name, role from Employee where id = ?";
+	private static final String INSERT_QUERY = "insert into Employee (id, name, role) values (?,?,?)";
 
 	private DataSource dataSource;
 
@@ -27,8 +33,6 @@ public class EmployeeDAOTemplate implements EmployeeDAO {
 	public void save(Employee employee) {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-		String INSERT_QUERY = "insert into Employee (id, name, role) values (?,?,?)";
-		
 		Object[] args = new Object[] {employee.getId(), employee.getName(), employee.getRole()};
 
 		int out = jdbcTemplate.update(INSERT_QUERY, args);
@@ -43,8 +47,6 @@ public class EmployeeDAOTemplate implements EmployeeDAO {
 	public Employee getById(int id) {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-		String GET_BY_ID_QUERY = "select id, name, role from Employee where id = ?";
-		
 		//using RowMapper anonymous class, we can create a separate RowMapper for reuse
 		Employee emp = jdbcTemplate.queryForObject(GET_BY_ID_QUERY, new Object[]{id}, new RowMapper<Employee>(){
 			@Override
@@ -63,12 +65,10 @@ public class EmployeeDAOTemplate implements EmployeeDAO {
 	public void update(Employee employee) {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		
-		String UPDATE_QUERY = "update Employee set name=?, role=? where id=?";
-		
 		Object[] args = new Object[] {employee.getName(), employee.getRole(), employee.getId()};
 
 		int out = jdbcTemplate.update(UPDATE_QUERY, args);
-		if(out != 0)
+		if(out !=0)
 			LOGGER.debug("Employee updated with id="+employee.getId());
 		else 
 			LOGGER.debug("No Employee found with id="+employee.getId());
@@ -78,8 +78,6 @@ public class EmployeeDAOTemplate implements EmployeeDAO {
 	public void deleteById(int id) {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-		String DELETE_BY_ID = "delete from Employee where id=?";
-		
 		int out = jdbcTemplate.update(DELETE_BY_ID, id);
 		if(out !=0)
 			LOGGER.debug("Employee deleted with id="+id);
@@ -90,9 +88,6 @@ public class EmployeeDAOTemplate implements EmployeeDAO {
 	@Override
 	public List<Employee> getAll() {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-		
-		String GET_ALL = "select id, name, role from Employee";
-		
 		List<Employee> empList = new ArrayList<Employee>();
 
 		List<Map<String,Object>> empRows = jdbcTemplate.queryForList(GET_ALL);
